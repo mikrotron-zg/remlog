@@ -21,5 +21,6 @@ public class Device {
   private String name;
 
   @NonNull
+  @Column(length=16)
   private String deviceId;
 }
