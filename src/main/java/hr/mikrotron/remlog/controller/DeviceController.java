@@ -30,4 +30,10 @@ public class DeviceController {
     // TODO: generate unique device ID
     return deviceRepository.save(device);
   }
+
+  public static class DeviceNotFoundException extends RuntimeException {
+    public DeviceNotFoundException(Long id) {
+      super("Could not find device " + id + "\n");
+    }
+  }
 }
