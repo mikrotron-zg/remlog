@@ -21,6 +21,6 @@ public class Device {
   private String name;
 
   @NonNull
-  @Column(length=16)
+  @Column(length=16, unique = true)
   private String deviceId;
 }
