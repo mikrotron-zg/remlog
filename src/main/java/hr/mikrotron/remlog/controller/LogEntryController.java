@@ -1,15 +1,11 @@
 package hr.mikrotron.remlog.controller;
 
-import hr.mikrotron.remlog.entity.Device;
 import hr.mikrotron.remlog.entity.LogEntry;
 import hr.mikrotron.remlog.repository.DeviceRepository;
 import hr.mikrotron.remlog.repository.LogEntryRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/logs")

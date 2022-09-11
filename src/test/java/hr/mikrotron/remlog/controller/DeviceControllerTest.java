@@ -5,16 +5,13 @@ import hr.mikrotron.remlog.entity.Device;
 import hr.mikrotron.remlog.repository.DeviceRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,7 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -46,9 +42,9 @@ class DeviceControllerTest {
   // Test data
   List<String> testStrings = new ArrayList<>(Arrays.asList("test 1", "test 2", "test 3"));
   List<Device> devices = new ArrayList<>(Arrays.asList(
-    new Device(1l, testStrings.get(0), RandomStringUtils.random(16, "abcdef0123456789")),
-    new Device(2l, testStrings.get(1), RandomStringUtils.random(16, "abcdef0123456789")),
-    new Device(3l, testStrings.get(2), RandomStringUtils.random(16, "abcdef0123456789"))));
+    new Device(1L, testStrings.get(0), RandomStringUtils.random(16, "abcdef0123456789")),
+    new Device(2L, testStrings.get(1), RandomStringUtils.random(16, "abcdef0123456789")),
+    new Device(3L, testStrings.get(2), RandomStringUtils.random(16, "abcdef0123456789"))));
   String postBody = "{\"name\" : \"test 1\"}";
 
   @Test
@@ -99,7 +95,7 @@ class DeviceControllerTest {
     mockMvc.perform(mockRequest)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", notNullValue()))
-        .andExpect(jsonPath("$.name", is(testStrings.get(0))));;
+        .andExpect(jsonPath("$.name", is(testStrings.get(0))));
   }
 
   @Test
