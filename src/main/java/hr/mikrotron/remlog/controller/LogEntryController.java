@@ -21,6 +21,7 @@ public class LogEntryController {
 
   @GetMapping(value = "{deviceId}")
   public List<LogEntry> getLogEntriesByDeviceId(@PathVariable(value = "deviceId") String deviceId){
+    // TODO: should only return list of time/date and log content
     return logEntryRepository.findLogEntriesByDevice(
         deviceRepository.findDeviceByDeviceId(deviceId)
             .orElseThrow(NotAuthorizedException::new));

@@ -1,0 +1,66 @@
+package hr.mikrotron.remlog.controller;
+
+import hr.mikrotron.remlog.entity.Device;
+import hr.mikrotron.remlog.entity.LogEntry;
+import hr.mikrotron.remlog.repository.DeviceRepository;
+import hr.mikrotron.remlog.repository.LogEntryRepository;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest({LogEntryController.class, DeviceController.class})
+class LogEntryControllerTest {
+  @Autowired
+  private MockMvc mockMvc;
+
+  @MockBean
+  LogEntryRepository logEntryRepository;
+  @MockBean
+  DeviceRepository deviceRepository;
+
+  // Test data
+  String postBody = "{\"content\" : \"test 1\"}";
+  Device device = new Device(1L, "test", RandomStringUtils.random(16, "abcdef0123456789"));
+  List<LogEntry> logEntries = new ArrayList<>(Arrays.asList(
+      new LogEntry(1L, "log 1", LocalDateTime.now(), device),
+      new LogEntry(2L, "log 2", LocalDateTime.now(), device),
+      new LogEntry(4L, "log 4", LocalDateTime.now(), device)
+  ));
+
+  @Test
+  void getLogEntriesByDeviceId() throws Exception{
+    Mockito.when(deviceRepository.findDeviceByDeviceId(anyString())).thenReturn(Optional.of(device));
+    Mockito.when(logEntryRepository.findLogEntriesByDevice(any(Device.class))).thenReturn(logEntries);
+
+    mockMvc.perform(MockMvcRequestBuilders
+            .get("/logs/" + device.getDeviceId())
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", notNullValue()))
+        .andExpect(jsonPath("$[2].content", is("log 4")));
+  }
+
+  @Test
+  void createLogEntry() {
+  }
+}
