@@ -76,6 +76,14 @@ class LogEntryControllerTest {
   }
 
   @Test
+  void pathNotFound() throws Exception{
+    mockMvc.perform(MockMvcRequestBuilders
+            .get("/log/abc/123/xyz")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
   void createLogEntry() {
   }
 }
