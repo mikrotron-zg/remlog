@@ -23,8 +23,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,6 +62,17 @@ class LogEntryControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", notNullValue()))
         .andExpect(jsonPath("$[1].content", is("log 2")));
+  }
+
+  @Test
+  void getLogByDeviceByDeviceIdNotFound() throws Exception{
+    Mockito.when(deviceRepository.findDeviceByDeviceId(anyString()))
+        .thenThrow(DeviceController.DeviceNotFoundException.class);
+
+    mockMvc.perform(MockMvcRequestBuilders
+            .get("/logs/abc")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
   }
 
   @Test
