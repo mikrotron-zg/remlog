@@ -1,6 +1,7 @@
 package hr.mikrotron.remlog.controller;
 
 import hr.mikrotron.remlog.entity.Device;
+import hr.mikrotron.remlog.entity.LogEntry;
 import hr.mikrotron.remlog.repository.DeviceRepository;
 import hr.mikrotron.remlog.repository.Log;
 import hr.mikrotron.remlog.repository.LogEntryRepository;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
@@ -84,6 +86,32 @@ class LogEntryControllerTest {
   }
 
   @Test
-  void createLogEntry() {
+  void createLogEntry() throws Exception{
+    Mockito.when(deviceRepository.findDeviceByDeviceId(anyString())).thenReturn(Optional.of(device));
+    Mockito.when(logEntryRepository.save(any(LogEntry.class))).thenReturn(
+        LogEntry.builder()
+            .id(1L)
+            .content("test log 1")
+            .device(device)
+            .build());
+
+    mockMvc.perform(MockMvcRequestBuilders
+            .post("/logs/device/" + device.getDeviceId())
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(postBody))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void createLogEntryDeviceNotFound() throws Exception{
+    Mockito.when(deviceRepository.findDeviceByDeviceId(anyString()))
+        .thenThrow(DeviceController.DeviceNotFoundException.class);
+   mockMvc.perform(MockMvcRequestBuilders
+            .post("/logs/device/" + device.getDeviceId())
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(postBody))
+        .andExpect(status().isNotFound());
   }
 }
