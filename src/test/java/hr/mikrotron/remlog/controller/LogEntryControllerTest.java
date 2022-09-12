@@ -1,8 +1,8 @@
 package hr.mikrotron.remlog.controller;
 
 import hr.mikrotron.remlog.entity.Device;
-import hr.mikrotron.remlog.entity.LogEntry;
 import hr.mikrotron.remlog.repository.DeviceRepository;
+import hr.mikrotron.remlog.repository.Log;
 import hr.mikrotron.remlog.repository.LogEntryRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -39,25 +39,30 @@ class LogEntryControllerTest {
   DeviceRepository deviceRepository;
 
   // Test data
-  String postBody = "{\"content\" : \"test 1\"}";
+  String postBody = "{\"content\" : \"test log 1\"}";
   Device device = new Device(1L, "test", RandomStringUtils.random(16, "abcdef0123456789"));
-  List<LogEntry> logEntries = new ArrayList<>(Arrays.asList(
-      new LogEntry(1L, "log 1", LocalDateTime.now(), device),
-      new LogEntry(2L, "log 2", LocalDateTime.now(), device),
-      new LogEntry(4L, "log 4", LocalDateTime.now(), device)
+  List<Log> logs = new ArrayList<>(Arrays.asList(
+      new Log() {
+        public LocalDateTime getDateTime(){return LocalDateTime.now().minusMinutes(2);}
+        public String getContent(){return "log 1";}
+      },
+      new Log() {
+        public LocalDateTime getDateTime(){return LocalDateTime.now().minusMinutes(1);}
+        public String getContent(){return "log 2";}
+      }
   ));
 
   @Test
   void getLogEntriesByDeviceId() throws Exception{
     Mockito.when(deviceRepository.findDeviceByDeviceId(anyString())).thenReturn(Optional.of(device));
-    Mockito.when(logEntryRepository.findLogEntriesByDevice(any(Device.class))).thenReturn(logEntries);
+    Mockito.when(logEntryRepository.findLogEntriesByDevice(any(Device.class))).thenReturn(logs);
 
     mockMvc.perform(MockMvcRequestBuilders
             .get("/logs/" + device.getDeviceId())
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", notNullValue()))
-        .andExpect(jsonPath("$[2].content", is("log 4")));
+        .andExpect(jsonPath("$[1].content", is("log 2")));
   }
 
   @Test

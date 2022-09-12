@@ -2,6 +2,7 @@ package hr.mikrotron.remlog.controller;
 
 import hr.mikrotron.remlog.entity.LogEntry;
 import hr.mikrotron.remlog.repository.DeviceRepository;
+import hr.mikrotron.remlog.repository.Log;
 import hr.mikrotron.remlog.repository.LogEntryRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,7 @@ public class LogEntryController {
   }
 
   @GetMapping(value = "{deviceId}")
-  public List<LogEntry> getLogEntriesByDeviceId(@PathVariable(value = "deviceId") String deviceId){
-    // TODO: should only return list of time/date and log content
+  public List<Log> getLogEntriesByDeviceId(@PathVariable(value = "deviceId") String deviceId){
     return logEntryRepository.findLogEntriesByDevice(
         deviceRepository.findDeviceByDeviceId(deviceId)
             .orElseThrow(NotAuthorizedException::new));
