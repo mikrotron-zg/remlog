@@ -1,6 +1,5 @@
 package hr.mikrotron.remlog.entity;
 
-import hr.mikrotron.remlog.entity.Device;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,6 +22,7 @@ public class LogEntry {
   private Long id;
 
   @NonNull
+  @Column(length = 1024)
   private String content;
 
   @CreationTimestamp
